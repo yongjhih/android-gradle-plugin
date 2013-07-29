@@ -95,10 +95,11 @@ public class RenderScriptTask extends MultiFilesTask {
             var.setValue(mBuildToolsRoot);
             if (SdkConstants.CURRENT_PLATFORM == SdkConstants.PLATFORM_DARWIN) {
                 var.setKey("DYLD_LIBRARY_PATH");
+                task.addEnv(var);
             } else if (SdkConstants.CURRENT_PLATFORM == SdkConstants.PLATFORM_LINUX) {
                 var.setKey("LD_LIBRARY_PATH");
+                task.addEnv(var);
             }
-            task.addEnv(var);
 
             for (String path : mIncludePath.list()) {
                 File res = new File(path);
