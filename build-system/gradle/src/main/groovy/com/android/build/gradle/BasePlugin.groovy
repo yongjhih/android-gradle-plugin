@@ -1278,6 +1278,7 @@ public abstract class BasePlugin {
             set.addAll(variantData.ndkCompileTask.soFolder)
             set.addAll(variantData.renderscriptCompileTask.libOutputDir)
             set.addAll(variantConfig.libraryJniFolders)
+            set.addAll(variantConfig.jniLibsList)
 
             if (variantConfig.mergedFlavor.renderscriptSupportMode) {
                 File rsLibs = getAndroidBuilder(variantData).getSupportNativeLibFolder()
