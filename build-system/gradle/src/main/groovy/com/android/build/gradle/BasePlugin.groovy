@@ -1443,8 +1443,6 @@ public abstract class BasePlugin {
 
         // --- InJars / LibraryJars ---
 
-        List<File> packagedJars = getAndroidBuilder(variantData).getPackagedJars(variantConfig)
-
         if (variantData instanceof LibraryVariantData) {
             String packageName = variantConfig.getPackageFromManifest()
             if (packageName == null) {
@@ -1465,18 +1463,26 @@ public abstract class BasePlugin {
             String include = exclude.replace('!', '')
             proguardTask.libraryjars(variantData.javaCompileTask.destinationDir, filter: include)
 
-            // injar: the local dependencies, filter out local jars from packagedJars
-            Object[] jars = LibraryPlugin.getLocalJarFileList(variantData.variantDependency)
-            for (Object inJar : jars) {
-                if (packagedJars.contains(inJar)) {
-                    packagedJars.remove(inJar);
-                }
-                proguardTask.injars((File) inJar, filter: '!META-INF/MANIFEST.MF')
-            }
+            proguardTask.doFirst {
+                // we need to query the list of packaged Jar just before the task
+                // runs to make sure all the created jars are present.
+                // (This is mostly for aar that needs expanding during the build, and their
+                // local jar files which aren't even known during evaluation/task creation).
+                List<File> packagedJars = getAndroidBuilder(variantData).getPackagedJars(variantConfig)
 
-            // libjar: the library dependencies
-            for (File libJar : packagedJars) {
-                proguardTask.libraryjars(libJar, filter: '!META-INF/MANIFEST.MF')
+                // injar: the local dependencies, filter out local jars from packagedJars
+                Object[] jars = LibraryPlugin.getLocalJarFileList(variantData.variantDependency)
+                for (Object inJar : jars) {
+                    if (packagedJars.contains(inJar)) {
+                        packagedJars.remove(inJar);
+                    }
+                    proguardTask.injars((File) inJar, filter: '!META-INF/MANIFEST.MF')
+                }
+
+                // libjar: the library dependencies
+                for (File libJar : packagedJars) {
+                    proguardTask.libraryjars(libJar, filter: '!META-INF/MANIFEST.MF')
+                }
             }
 
             // ensure local jars keep their package names
@@ -1485,9 +1491,20 @@ public abstract class BasePlugin {
             // injar: the compilation output
             proguardTask.injars(variantData.javaCompileTask.destinationDir)
 
-            // injar: the dependencies
-            for (File inJar : packagedJars) {
-                proguardTask.injars(inJar, filter: '!META-INF/MANIFEST.MF')
+            proguardTask.doFirst {
+                // we need to query the list of packaged Jar just before the task
+                // runs to make sure all the created jars are present.
+                // (This is mostly for aar that needs expanding during the build, and their
+                // local jar files which aren't even known during evaluation/task creation).
+                List<File> packagedJars = getAndroidBuilder(variantData).getPackagedJars(variantConfig)
+
+                // injar: the dependencies
+                for (File inJar : packagedJars) {
+                    System.out.println(">>> " + inJar)
+                    proguardTask.injars(inJar, filter: '!META-INF/MANIFEST.MF')
+                }
+
+                proguardTask.outjars(outFile)
             }
         }
 
@@ -1506,9 +1523,7 @@ public abstract class BasePlugin {
             }
         }
 
-        // --- Out files ---
-
-        proguardTask.outjars(outFile)
+        // --- Other Out files ---
 
         proguardTask.dump("${project.buildDir}/proguard/${variantData.variantConfiguration.dirName}/dump.txt")
         proguardTask.printseeds(
