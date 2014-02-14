@@ -183,7 +183,7 @@ public class SdkManagerTestCase extends TestCase {
         File targetDir = makeFakeTargetInternal(platformsDir);
         makeFakeLegacySysImg(targetDir, SdkConstants.ABI_ARMEABI);
 
-        makeFakeSkinInternal(targetDir);
+        makeFakeSkin(targetDir, "HVGA");
         makeFakeSourceInternal(sdkDir);
         return sdkDir;
     }
@@ -228,9 +228,11 @@ public class SdkManagerTestCase extends TestCase {
      *          Use {@link #TARGET_DIR_NAME_0} to match the default single platform.
      * @param tagId An optional tag id. Use null for legacy no-tag system images.
      * @param abiType The abi for the system image.
+     * @return The directory of the system-image/tag/abi created.
      * @throws IOException if the file fails to be created.
      */
-    protected void makeSystemImageFolder(
+    @NonNull
+    protected File makeSystemImageFolder(
             @NonNull String targetDir,
             @Nullable String tagId,
             @NonNull String abiType) throws IOException {
@@ -242,6 +244,7 @@ public class SdkManagerTestCase extends TestCase {
         sysImgDir = new File(sysImgDir, abiType);
 
         makeFakeSysImgInternal(sysImgDir, tagId, abiType);
+        return sysImgDir;
     }
 
     //----
@@ -340,8 +343,15 @@ public class SdkManagerTestCase extends TestCase {
     }
 
     /** Utility to make a fake skin for the given target */
-    private void makeFakeSkinInternal(File targetDir) {
-        FileOp.append(targetDir, "skins", "HVGA").mkdirs();
+    protected void makeFakeSkin(File targetDir, String skinName) throws IOException {
+        File skinFolder = FileOp.append(targetDir, "skins", skinName);
+        skinFolder.mkdirs();
+
+        // To be detected properly, the skin folder should have a "layout" file.
+        // Its content is however not parsed.
+        FileWriter out = new FileWriter(new File(skinFolder, "layout"));
+        out.write("parts {\n}\n");
+        out.close();
     }
 
     /** Utility to create a fake source with a few files in the given sdk folder. */
