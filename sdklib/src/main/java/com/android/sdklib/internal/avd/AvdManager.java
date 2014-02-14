@@ -771,7 +771,8 @@ public class AvdManager {
                 }
 
                 // skinPath is the skin folder path relative to the SDK directory
-                skinPath = FileOp.makeRelative(myLocalSdk.getLocation(), skinFolder);
+                // [Tools 22.6 doesn't use the new LocalSdk.getLocation() as File API.]
+                skinPath = FileOp.makeRelative(new File(mSdkManager.getLocation()), skinFolder);
             }
 
             // Set skin.name for display purposes in the AVD manager and
@@ -1095,7 +1096,7 @@ public class AvdManager {
         String path = skin.getAbsolutePath();
 
         // make this path relative to the SDK location
-        String sdkLocation = myLocalSdk.getPath();
+        String sdkLocation = mSdkManager.getLocation();
         if (path.startsWith(sdkLocation) == false) {
             // this really really should not happen.
             log.error(null, "Target location is not inside the SDK.");
