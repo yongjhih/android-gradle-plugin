@@ -66,3 +66,10 @@ task copyGradleProperty(type: Copy) {
     from { "${System.env.HOME}/.gradle/gradle.properties" }
     into { gradle.gradleUserHomeDir }
 }
+
+task setupGradleInIde << {
+   File dir = gradle.gradleHomeDir
+   String link = dir.path.substring(project.ext.androidHostOut.path.length() + 1)
+   String command = "ln -s $link ${new File(project.ext.androidHostOut, "gradle-dist-link").path}"
+   command.execute()
+}
