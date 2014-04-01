@@ -42,8 +42,8 @@ public class DeviceManagerTest extends SdkManagerTestCase {
 
     private DeviceManager createDeviceManager() {
         log = super.getLog();
-        String osSdkLocation = getSdkManager().getLocation();
-        return DeviceManager.createInstance(osSdkLocation, log);
+        File sdkLocation = getSdkManager().getLocalSdk().getLocation();
+        return DeviceManager.createInstance(sdkLocation, log);
     }
 
     /** Returns a list of just the devices' display names, for unit test comparisons. */
