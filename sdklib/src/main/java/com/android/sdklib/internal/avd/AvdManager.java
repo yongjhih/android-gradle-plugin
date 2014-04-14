@@ -361,7 +361,7 @@ public class AvdManager {
             throws AndroidLocationException {
         synchronized(mManagers) {
             AvdManager manager;
-            if ((manager = mManagers.get(localSdk.getLocation())) != null) {
+            if ((manager = mManagers.get(localSdk.getLocation().getPath())) != null) {
                 return manager;
             }
             manager = new AvdManager(localSdk, log);
