@@ -114,7 +114,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class GradleImport {
     public static final String NL = SdkUtils.getLineSeparator();
     public static final int CURRENT_COMPILE_VERSION = 19;
-    public static final String CURRENT_BUILD_TOOLS_VERSION = "19.0.3";
+    public static final String CURRENT_BUILD_TOOLS_VERSION = "19.1";
     public static final String ANDROID_GRADLE_PLUGIN =
             GRADLE_PLUGIN_NAME + GRADLE_PLUGIN_LATEST_VERSION;
     public static final String MAVEN_URL_PROPERTY = "android.mavenRepoUrl";
