@@ -5,8 +5,6 @@ include 'common'
 include 'ddmlib'
 include 'draw9patch'
 include 'dvlib'
-include 'fat32lib'
-include 'jobb'
 include 'layoutlib-api'
 include 'lint'
 include 'lint-api'
@@ -30,7 +28,6 @@ include 'gradle'
 project(':ant-tasks'       ).projectDir = new File(rootDir, 'legacy/ant-tasks')
 project(':archquery'       ).projectDir = new File(rootDir, 'legacy/archquery')
 project(':dvlib'           ).projectDir = new File(rootDir, 'device_validator/dvlib')
-project(':fat32lib'        ).projectDir = new File(rootDir, '../external/fat32lib')
 project(':lint'            ).projectDir = new File(rootDir, 'lint/cli')
 project(':lint-api'        ).projectDir = new File(rootDir, 'lint/libs/lint-api')
 project(':lint-checks'     ).projectDir = new File(rootDir, 'lint/libs/lint-checks')
