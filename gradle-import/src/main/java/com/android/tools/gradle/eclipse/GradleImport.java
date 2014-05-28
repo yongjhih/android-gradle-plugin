@@ -47,9 +47,14 @@ import com.android.sdklib.repository.local.LocalSdk;
 import com.android.utils.ILogger;
 import com.android.utils.SdkUtils;
 import com.android.utils.StdLogger;
+import com.android.utils.XmlUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.primitives.Bytes;
@@ -58,7 +63,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -66,16 +70,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Importer which can generate Android Gradle projects.
@@ -1271,14 +1271,8 @@ public class GradleImport {
 
     Document getXmlDocument(File file, boolean namespaceAware) throws IOException {
         String xml = Files.toString(file, UTF_8);
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        InputSource is = new InputSource(new StringReader(xml));
-        factory.setNamespaceAware(namespaceAware);
-        factory.setValidating(false);
         try {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(is);
+            return XmlUtils.parseDocument(xml, namespaceAware);
         } catch (Exception e) {
             reportError(null, file, "Invalid XML file: " + file.getPath() + ":\n"
                     + e.getMessage());
