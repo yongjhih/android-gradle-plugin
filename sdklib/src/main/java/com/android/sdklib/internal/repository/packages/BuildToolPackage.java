@@ -146,7 +146,7 @@ public class BuildToolPackage extends FullRevisionPackage {
         }
 
         if (error == null && rev != null) {
-            return new BuildToolPackage(
+            BuildToolPackage pkg = new BuildToolPackage(
                     null,                       //source
                     props,
                     0,                          //revision (extracted from props)
@@ -157,6 +157,11 @@ public class BuildToolPackage extends FullRevisionPackage {
                     Arch.getCurrentArch(),      //archiveArch
                     buildToolDir.getAbsolutePath());
 
+            if (pkg.hasCompatibleArchive()) {
+                return pkg;
+            } else {
+                error = "Package is not compatible with current OS";
+            }
         }
 
 
