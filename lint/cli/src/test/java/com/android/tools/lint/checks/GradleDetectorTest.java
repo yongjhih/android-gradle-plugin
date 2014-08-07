@@ -22,8 +22,6 @@ import static com.android.tools.lint.checks.GradleDetector.DEPENDENCY;
 import static com.android.tools.lint.checks.GradleDetector.DEPRECATED;
 import static com.android.tools.lint.checks.GradleDetector.GRADLE_GETTER;
 import static com.android.tools.lint.checks.GradleDetector.GRADLE_PLUGIN_COMPATIBILITY;
-import static com.android.tools.lint.checks.GradleDetector.IMPROPER_PROJECT_LEVEL_STATEMENT;
-import static com.android.tools.lint.checks.GradleDetector.MISPLACED_STATEMENT;
 import static com.android.tools.lint.checks.GradleDetector.PATH;
 import static com.android.tools.lint.checks.GradleDetector.PLUS;
 import static com.android.tools.lint.checks.GradleDetector.REMOTE_VERSION;
@@ -122,7 +120,7 @@ public class GradleDetectorTest extends AbstractCheckTest {
     }
 
     public void test() throws Exception {
-        mEnabled = null;
+        mEnabled = Sets.newHashSet(COMPATIBILITY, DEPRECATED, DEPENDENCY, PLUS);
         assertEquals(""
             + "build.gradle:25: Error: This support library should not use a lower version (13) than the targetSdkVersion (17) [GradleCompatible]\n"
             + "    compile 'com.android.support:appcompat-v7:13.0.0'\n"
@@ -133,15 +131,15 @@ public class GradleDetectorTest extends AbstractCheckTest {
             + "build.gradle:5: Warning: Old buildToolsVersion 19.0.0; recommended version is 19.1.0 or later [GradleDependency]\n"
             + "    buildToolsVersion \"19.0.0\"\n"
             + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+            + "build.gradle:24: Warning: A newer version of com.google.guava:guava than 11.0.2 is available: 17.0.0 [GradleDependency]\n"
+            + "    freeCompile 'com.google.guava:guava:11.0.2'\n"
+            + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
             + "build.gradle:25: Warning: A newer version of com.android.support:appcompat-v7 than 13.0.0 is available: 20.0.0 [GradleDependency]\n"
             + "    compile 'com.android.support:appcompat-v7:13.0.0'\n"
             + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
             + "build.gradle:23: Warning: Avoid using + in version numbers; can lead to unpredictable and unrepeatable builds (com.android.support:appcompat-v7:+) [GradleDynamicVersion]\n"
             + "    compile 'com.android.support:appcompat-v7:+'\n"
             + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-            + "build.gradle:24: Warning: A newer version of com.google.guava:guava than 11.0.2 is available: 17.0.0 [NewerVersionAvailable]\n"
-            + "    freeCompile 'com.google.guava:guava:11.0.2'\n"
-            + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
             + "1 errors, 5 warnings\n",
 
             lintProject("gradle/Dependencies.gradle=>build.gradle"));
@@ -346,72 +344,6 @@ public class GradleDetectorTest extends AbstractCheckTest {
         }
     }
 
-    public void testBadDependenciesInBuildscriptBlock() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:12: Warning: Only `classpath` dependencies should appear in the `buildscript` dependencies block [ImproperProjectLevelStatement]\n"
-                + "    compile 'com.android.support:appcompat-v7:19.+'\n"
-                + "    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/BadDependenciesInBuildscriptBlock.gradle=>build.gradle"));
-    }
-
-    public void testDependenciesInAndroidBlock() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:14: Warning: A `dependencies` block doesn't belong here. [MisplacedStatement]\n"
-                + "  dependencies {\n"
-                + "  ^\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/DependenciesInAndroidBlock.gradle=>build.gradle"));
-    }
-
-    public void testNoAndroidStatement() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:1: Warning: The `apply plugin` statement should only be used if there is a corresponding module for this build file. [ImproperProjectLevelStatement]\n"
-                + "apply plugin: 'com.android.application'\n"
-                + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/NoAndroidStatement.gradle=>build.gradle"));
-    }
-
-    public void testRepositoriesInDependenciesBlock() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:31: Warning: A `repositories` block doesn't belong here. [MisplacedStatement]\n"
-                + "  repositories {\n"
-                + "  ^\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/RepositoriesInDependenciesBlock.gradle=>build.gradle"));
-    }
-
-    public void testTopLevelDependenciesBlock() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:33: Warning: A top-level `dependencies` block should only appear in build files that correspond to a module. [ImproperProjectLevelStatement]\n"
-                + "dependencies {\n"
-                + "^\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/TopLevelDependenciesBlock.gradle=>build.gradle"));
-    }
-
-    public void testTopLevelRepositoriesBlock() throws Exception {
-        mEnabled = Sets.newHashSet(IMPROPER_PROJECT_LEVEL_STATEMENT, MISPLACED_STATEMENT);
-        assertEquals(""
-                + "build.gradle:17: Warning: A top-level `repositories` block should only appear in build files that correspond to a module. [ImproperProjectLevelStatement]\n"
-                + "repositories {\n"
-                + "^\n"
-                + "0 errors, 1 warnings\n",
-
-                lintProject("gradle/TopLevelRepositoriesBlock.gradle=>build.gradle"));
-    }
-
     @Override
     protected void checkReportedError(@NonNull Context context, @NonNull Issue issue,
             @NonNull Severity severity, @Nullable Location location, @NonNull String message,
@@ -519,7 +451,6 @@ public class GradleDetectorTest extends AbstractCheckTest {
                         if (expressions.size() == 1 &&
                                 expressions.get(0) instanceof ClosureExpression) {
                             if (isInterestingBlock(parent, parentParent)) {
-                                checkBlock(context, parent, parentParent, expression);
                                 ClosureExpression closureExpression =
                                         (ClosureExpression)expressions.get(0);
                                 Statement block = closureExpression.getCode();
