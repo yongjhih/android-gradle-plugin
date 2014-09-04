@@ -89,6 +89,14 @@ public class ${activityClass} extends PreferenceActivity {
         setupSimplePreferencesScreen();
     }
 
+<#if minApiLevel gte 19>
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        return ${activityClass}.class.getName().equals(fragmentName)
+               || super.isValidFragment(fragmentName);
+    }
+</#if>
+
     /**
      * Shows the simplified settings UI if the device configuration if the
      * device configuration dictates that a simplified, single-pane UI should be
