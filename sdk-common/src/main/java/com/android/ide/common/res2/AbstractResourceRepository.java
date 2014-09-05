@@ -43,6 +43,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 public abstract class AbstractResourceRepository {
 
     private final boolean mFramework;
@@ -50,7 +52,8 @@ public abstract class AbstractResourceRepository {
     private class RepositoryMerger implements MergeConsumer<ResourceItem> {
 
         @Override
-        public void start() throws ConsumerException {
+        public void start(@NonNull DocumentBuilderFactory factory)
+                throws ConsumerException {
         }
 
         @Override
@@ -417,10 +420,7 @@ public abstract class AbstractResourceRepository {
         synchronized (ITEM_MAP_LOCK) {
             for (ListMultimap<String, ResourceItem> map : getMap().values()) {
                 for (ResourceItem item : map.values()) {
-                    ResourceFile source = item.getSource();
-                    if (source != null) {
-                        qualifiers.add(source.getQualifiers());
-                    }
+                    qualifiers.add(item.getQualifiers());
                 }
             }
         }
@@ -453,10 +453,7 @@ public abstract class AbstractResourceRepository {
         synchronized (ITEM_MAP_LOCK) {
             for (ListMultimap<String, ResourceItem> map : getMap().values()) {
                 for (ResourceItem item : map.values()) {
-                    ResourceFile source = item.getSource();
-                    if (source != null) {
-                        qualifiers.add(source.getQualifiers());
-                    }
+                    qualifiers.add(item.getQualifiers());
                 }
             }
         }
