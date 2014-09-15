@@ -22,6 +22,7 @@ import com.android.annotations.VisibleForTesting;
 import com.android.annotations.concurrency.GuardedBy;
 import com.android.ddmlib.log.LogReceiver;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.io.File;
@@ -1061,5 +1062,32 @@ final class Device implements IDevice {
         mLastBatteryLevel = receiver.getBatteryLevel();
         mLastBatteryCheckTime = System.currentTimeMillis();
         return mLastBatteryLevel;
+    }
+
+    @NonNull
+    @Override
+    public List<String> getAbis() {
+        List<String> abis = Lists.newArrayListWithExpectedSize(2);
+        String abi = getProperty(IDevice.PROP_DEVICE_CPU_ABI);
+        if (abi != null) {
+            abis.add(abi);
+        }
+
+        abi = getProperty(IDevice.PROP_DEVICE_CPU_ABI2);
+        if (abi != null) {
+            abis.add(abi);
+        }
+
+        return abis;
+    }
+
+    @Override
+    public int getDensity() {
+        String densityValue = getProperty(IDevice.PROP_DEVICE_DENSITY);
+        if (densityValue != null) {
+            return Integer.parseInt(densityValue);
+        }
+
+        return 0;
     }
 }
