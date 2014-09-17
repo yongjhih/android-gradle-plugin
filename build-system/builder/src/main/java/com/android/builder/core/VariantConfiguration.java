@@ -217,7 +217,7 @@ public class VariantConfiguration {
         mSigningConfigOverride = signingConfigOverride;
         checkState(mType != Type.TEST || mTestedConfig != null);
 
-        mMergedFlavor = mDefaultConfig;
+        mMergedFlavor = mDefaultConfig.clone();
         computeNdkConfig();
 
         if (testedConfig != null &&
