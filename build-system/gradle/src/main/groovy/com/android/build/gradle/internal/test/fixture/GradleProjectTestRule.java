@@ -56,7 +56,7 @@ import java.util.List;
  */
 public class GradleProjectTestRule implements TestRule {
 
-    private static final String ANDROID_GRADLE_VERSION = "0.13.0";
+    private static final String ANDROID_GRADLE_VERSION = "0.14.0";
 
     private File testDir;
 
