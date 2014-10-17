@@ -89,10 +89,13 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -1539,12 +1542,15 @@ public class AndroidBuilder {
             @NonNull File outDexFolder,
             @NonNull DexOptions dexOptions,
             @Nullable List<String> additionalParameters,
+            @NonNull File outInputListFolder,
             boolean incremental) throws IOException, InterruptedException, LoggedErrorException {
         checkNotNull(inputs, "inputs cannot be null.");
         checkNotNull(preDexedLibraries, "preDexedLibraries cannot be null.");
         checkNotNull(outDexFolder, "outDexFolder cannot be null.");
         checkNotNull(dexOptions, "dexOptions cannot be null.");
+        checkNotNull(outInputListFolder, "outInputListFolder cannot be null");
         checkArgument(outDexFolder.isDirectory(), "outDexFolder must be a folder");
+        checkArgument(outInputListFolder.isDirectory(), "outInputListFolder must be a folder");
         checkState(mTargetInfo != null,
                 "Cannot call convertByteCode() before setTargetInfo() is called.");
 
@@ -1595,6 +1601,33 @@ public class AndroidBuilder {
         command.add("--output");
         command.add(outDexFolder.getAbsolutePath());
 
+        // clean up and add library inputs.
+        List<String> libraryList = Lists.newArrayList();
+        for (File f : preDexedLibraries) {
+            if (f != null && f.exists()) {
+                libraryList.add(f.getAbsolutePath());
+            }
+        }
+
+        File inputListFile = null;
+        if (!libraryList.isEmpty()) {
+            mLogger.verbose("Dex pre-dexed inputs: " + libraryList);
+
+            if(canUseInputListSwitch(buildToolInfo)) {
+                if(!outInputListFolder.exists()) {
+                    outInputListFolder.mkdirs();
+                }
+                inputListFile = new File(outInputListFolder, "libraryList.txt");
+
+                // Write each library line by line to file
+                writeLinesToFile(inputListFile, libraryList);
+                command.add("--input-list");
+                command.add(inputListFile.getAbsolutePath());
+            } else {
+                command.addAll(libraryList);
+            }
+        }
+
         // clean up input list
         List<String> inputList = Lists.newArrayList();
         for (File f : inputs) {
@@ -1608,20 +1641,30 @@ public class AndroidBuilder {
             command.addAll(inputList);
         }
 
-        // clean up and add library inputs.
-        List<String> libraryList = Lists.newArrayList();
-        for (File f : preDexedLibraries) {
-            if (f != null && f.exists()) {
-                libraryList.add(f.getAbsolutePath());
+        mCmdLineRunner.runCmdLine(command, null);
+        if(inputListFile != null){
+            // clean up input list file
+            inputListFile.delete();
+        }
+    }
+
+    private boolean canUseInputListSwitch(BuildToolInfo buildToolInfo){
+        FullRevision minBuildToolRevision = new FullRevision(21, 0, 0);
+        return buildToolInfo.getRevision().compareTo(minBuildToolRevision) >= 0;
+    }
+
+    private void writeLinesToFile(File file, List<String> lines) throws IOException {
+        PrintWriter writer = null;
+        try{
+            writer = new PrintWriter(Files.newWriter(file, Charsets.UTF_8));
+            for(String line : lines){
+                writer.println(line);
+            }
+        } finally{
+            if(writer != null){
+                writer.close();
             }
         }
-
-        if (!libraryList.isEmpty()) {
-            mLogger.verbose("Dex pre-dexed inputs: " + libraryList);
-            command.addAll(libraryList);
-        }
-
-        mCmdLineRunner.runCmdLine(command, null);
     }
 
     /**
