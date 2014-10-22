@@ -32,6 +32,7 @@ public class ApkVariantOutputData extends BaseVariantOutputData {
     public ZipAlign zipAlignTask;
 
     private int versionCodeOverride = -1;
+    private String versionNameOverride = null;
 
     public ApkVariantOutputData(
             @Nullable String densityFilter,
@@ -85,11 +86,27 @@ public class ApkVariantOutputData extends BaseVariantOutputData {
         return variantData.getVariantConfiguration().getMergedFlavor().getVersionCode();
     }
 
+    public String getVersionName() {
+        if (versionNameOverride != null) {
+            return versionNameOverride;
+        }
+
+        return variantData.getVariantConfiguration().getMergedFlavor().getVersionName();
+    }
+
     public void setVersionCodeOverride(int versionCodeOverride) {
         this.versionCodeOverride = versionCodeOverride;
     }
 
     public int getVersionCodeOverride() {
         return versionCodeOverride;
+    }
+
+    public void setVersionNameOverride(String versionNameOverride) {
+        this.versionNameOverride = versionNameOverride;
+    }
+
+    public String getVersionNameOverride() {
+        return versionNameOverride;
     }
 }

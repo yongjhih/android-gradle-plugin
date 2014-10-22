@@ -44,7 +44,6 @@ public class AutomatedBuildTest extends BuildTest {
             "assets",
             "attrOrder",
             "basic",
-            "densitySplit",
             "densitySplitWithOldMerger",
             "dependencies",
             "dependencyChecker",

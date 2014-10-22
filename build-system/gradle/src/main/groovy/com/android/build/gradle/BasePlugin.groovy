@@ -758,6 +758,9 @@ public abstract class BasePlugin {
                 config.idOverride
             }
             processManifestTask.conventionMapping.versionName = {
+                if (variantOutputData instanceof ApkVariantOutputData) {
+                    return ((ApkVariantOutputData) variantOutputData).versionName
+                }
                 config.versionName
             }
             processManifestTask.conventionMapping.libraries = {
