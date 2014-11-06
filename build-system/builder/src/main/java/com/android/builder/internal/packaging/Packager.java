@@ -343,7 +343,7 @@ public final class Packager implements IArchiveBuilder {
 
     public void addDexFile(@NonNull File dexFile)
             throws DuplicateFileException, SealedPackageException, PackagerException {
-        addFile(dexFile, generateDexName());
+        addFile(dexFile, dexFile.getName());
     }
 
     private String generateDexName() {
