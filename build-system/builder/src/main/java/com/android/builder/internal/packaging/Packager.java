@@ -44,7 +44,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -335,7 +337,25 @@ public final class Packager implements IArchiveBuilder {
         });
 
         if (files != null && files.length > 0) {
+            Arrays.sort(files);
+
+            Set<File> classesFiles = new HashSet<File>();
+            Set<File> anotherFiles = new HashSet<File>();
+
             for (File file : files) {
+                if (file.getName().startsWith(SdkConstants.FD_CLASSES_OUTPUT)) {
+                    classesFiles.add(file);
+                } else {
+                    anotherFiles.add(file);
+                }
+            }
+
+            // accept files that sorted and starts with "classes" first
+            for (File file : classesFiles) {
+                addDexFile(file);
+            }
+
+            for (File file : anotherFiles) {
                 addDexFile(file);
             }
         }
@@ -343,7 +363,7 @@ public final class Packager implements IArchiveBuilder {
 
     public void addDexFile(@NonNull File dexFile)
             throws DuplicateFileException, SealedPackageException, PackagerException {
-        addFile(dexFile, dexFile.getName());
+        addFile(dexFile, generateDexName());
     }
 
     private String generateDexName() {
