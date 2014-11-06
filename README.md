@@ -1,7 +1,7 @@
 android-gradle-plugin
 =====================
 
-Import from aosp https://android.googlesource.com/a/platform/tools/base
+Import from aosp https://android.googlesource.com/platform/tools/base
 
 Usage
 =====
