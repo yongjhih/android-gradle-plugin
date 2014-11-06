@@ -7,5 +7,20 @@ Compilation
 ===========
 
 ```bash
+$ repo init -u https://android.googlesource.com/a/platform/manifest -b  gradle_0.13.1
+$ repo sync
+$ repo forall -c 'git checkout gradle_0.14.1'
+$ cd base
+$ git remote add yongjhih https://github.com/yongjhih/android-gradle-plugin
+$ git checkout yongjhih/master
+$ cd ..
+$ ./gradlew prepareRepo
 $ CUSTOM_GRADLE=0.14.2 ./gradlew clean assemble setupGradleInIde publishLocal
 ```
+
+Finally, the archives are in {repo-root-dir}/out
+
+Ref.
+====
+
+* http://tools.android.com/build/gradleplugin
