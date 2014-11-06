@@ -6,6 +6,8 @@ Import from aosp https://android.googlesource.com/a/platform/tools/base
 Usage
 =====
 
+precompiled maven in https://github.com/yongjhih/android-gradle-plugin.m2:
+
 ```gradle
 repositories {
     maven { url 'https://github.com/yongjhih/android-gradle-plugin.m2/raw/master/' }
