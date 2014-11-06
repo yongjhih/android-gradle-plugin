@@ -5,7 +5,7 @@ dependencies {
     compile project(':base:ddmlib')
 }
 
-group = 'com.android.tools.build'
+group = 'com.infstory.tools.build'
 archivesBaseName = 'builder-test-api'
 version = rootProject.ext.buildVersion
 

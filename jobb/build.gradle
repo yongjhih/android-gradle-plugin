@@ -5,7 +5,7 @@ dependencies {
     compile project(':external:fat32lib')
 }
 
-group = 'com.android.tools.build'
+group = 'com.infstory.tools.build'
 archivesBaseName = 'jobb'
 version = rootProject.ext.baseVersion
 

@@ -6,7 +6,7 @@ dependencies {
     compile project(':base:common')
 }
 
-group = 'com.android.tools.build'
+group = 'com.infstory.tools.build'
 archivesBaseName = 'builder-model'
 version = rootProject.ext.buildVersion
 

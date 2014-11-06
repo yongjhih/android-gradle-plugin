@@ -71,7 +71,7 @@ idea {
     }
 }
 
-group = 'com.android.tools.build'
+group = 'com.infstory.tools.build'
 archivesBaseName = 'gradle'
 version = rootProject.ext.buildVersion
 

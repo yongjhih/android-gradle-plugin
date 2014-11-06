@@ -3,7 +3,7 @@ apply plugin: 'sdk-java-lib'
 
 evaluationDependsOn(':base:sdklib')
 
-group = 'com.android.tools.build'
+group = 'com.infstory.tools.build'
 archivesBaseName = 'manifest-merger'
 version = rootProject.ext.baseVersion
 
