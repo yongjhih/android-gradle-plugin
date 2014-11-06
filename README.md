@@ -39,3 +39,8 @@ Ref.
 ====
 
 * http://tools.android.com/build/gradleplugin
+
+See Also
+========
+
+* http://stackoverflow.com/a/26782043/2872224
