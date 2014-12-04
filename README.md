@@ -1,7 +1,15 @@
 android-gradle-plugin
 =====================
 
-Import from aosp https://android.googlesource.com/platform/tools/base
+Import from aosp https://android.googlesource.com/platform/tools/base 0.14.1
+
+* Support multiDexKeepProguard file('multiDexKeep.pro')
+* Support multiDexKeepFile file('multiDexKeep.txt')
+* Fix wrong main dex file being used.
+
+Deprecated
+
+The official aosp 0.14.2+ already merged.
 
 Usage
 =====
