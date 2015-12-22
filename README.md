@@ -7,9 +7,7 @@ Import from aosp https://android.googlesource.com/platform/tools/base 0.14.1
 * Support multiDexKeepFile file('multiDexKeep.txt')
 * Fix wrong main dex file being used.
 
-
-
-The official aosp 0.14.2+ already merged.
+The official aosp 0.14.2+ already merged. (https://android-review.googlesource.com/#/c/113606/ , https://android.googlesource.com/platform/tools/base/+/f8b049e8be9e5eba426a3edcac4cd4fe78d944c8)
 
 Usage
 =====
